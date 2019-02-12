@@ -115,11 +115,4 @@ def anlyze_UFF(path):
     dic58=cleanup(dic58)
 
     return file,uffdic,model,nodes,trans_matrix,dic55,dic58
-
-
-
-
-path="C:\\Users\\Lovro\\Documents\\5.Letnik\\Magistrska\\Podatki in meritve\\meritve_Nosilec.uff"
-
-a = anlyze_UFF(path)
-print(a)
+    
