@@ -2,7 +2,45 @@ import pyuff
 import numpy as np
 
 def anlyze_UFF(path):
+    """anlyze_UFF
 
+    function reads UFF, and prepare returns. Return are prepered for further procesing. 
+
+    Parameters
+    ----------
+    path : string
+        paht of chosen UFF file you want to analyze
+
+    Returns
+    -------
+    file: UFF class element
+        UFF class element - file prepared for further usage
+    uffdic: {'151':...,'15':...,...} python dictonary
+        dictonary with indices of included uff datasets (file.get_sets())
+    model: ({'name':..., 'descript':...,'index': i},...) array like
+        array of dictonaries with name, description of model and index of native dataset
+    nodes: ({'n':[x[n],y[n],z[n]],....,'index': i},...) array like
+        array of dictoraries with coordinates of nodes and index of native dataset
+    trans_matrix: ({'n': trans. matrix,....,'index': i},...) array like
+        array of dictoraries with transformation matrix of local coordinate sistems in nodes and index of native dataset
+    dic55: {'2':....,'3':....,....} python dictonary
+        dictonary with indices of dataset type 55 refer to used analyses type
+        at pyuff supported:
+        '2' - norma mode
+        '3' - complex eigenvalue first order (displacement)
+        '5' - frequency response
+        '7' - complex eigenvalue second order (velocity)
+    dic58: {'1':....,'2':....,....} python dictonary
+        dictonary with indices of dataset type 58 refer to used function type
+        at pyuff supported:
+        '0' - General or Unknown
+        '1' - Time Response
+        '2' - Auto Spectrum
+        '3' - Cross Spectrum
+        '4' - Frequency Response Function
+        '6' - Coherence
+    """
+    
     file = pyuff.UFF(path)
     sets = file.get_set_types()
     sup_sets = file.get_supported_sets()
@@ -15,7 +53,7 @@ def anlyze_UFF(path):
                 index.append(i)
         uffdic[a] = index
 
-    keys_58 = [1, 2, 3, 4, 6]
+    keys_58 = [0, 1, 2, 3, 4, 6]
     keys_55 = [2, 3, 5, 7]
     dic58 = {}
     dic55 = {}
@@ -63,6 +101,21 @@ def anlyze_UFF(path):
         trans_matrix.append(dic)
 
     def cleanup(dic):
+        """cleanup
+        
+        [summary]
+        
+        Parameters
+        ----------
+        dic : [type]
+            [description]
+        
+        Returns
+        -------
+        [type]
+            [description]
+        """
+
         
         re_keys = []
         for key in dic.keys():
