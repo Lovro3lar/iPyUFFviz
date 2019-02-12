@@ -63,6 +63,7 @@ def anlyze_UFF(path):
         trans_matrix.append(dic)
 
     def cleanup(dic):
+        
         re_keys = []
         for key in dic.keys():
             if dic[key] == []:
