@@ -78,7 +78,7 @@ def anlyze_UFF(path):
         dic58[key] = index
 
     for i in uffdic['151']:
-        model.append({'name': file.read_sets(i)['model_name'], 'descript': file.read_sets(i)['description'],'index': i})
+        model.append({'name': file.read_sets(i)['model_name'], 'description': file.read_sets(i)['description'],'index': i})
 
     for i in uffdic['15']:
         dic = {}
