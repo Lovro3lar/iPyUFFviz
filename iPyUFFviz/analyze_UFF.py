@@ -101,21 +101,6 @@ def anlyze_UFF(path):
         trans_matrix.append(dic)
 
     def cleanup(dic):
-        """cleanup
-        
-        [summary]
-        
-        Parameters
-        ----------
-        dic : [type]
-            [description]
-        
-        Returns
-        -------
-        [type]
-            [description]
-        """
-
         
         re_keys = []
         for key in dic.keys():
