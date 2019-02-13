@@ -8,7 +8,7 @@ def basic_info(model):
     if len(model)>1:
         print('You have probably more than one model in file, so you can expect problems')
 
-def data_info(nodes, dic55, dic58):
+def data_info(file,nodes, dic55, dic58):
     X = []
     Y = []
     Z = []
@@ -23,7 +23,7 @@ def data_info(nodes, dic55, dic58):
     Y = np.asarray(Y)
     Z = np.asarray(Z)
     all_pt=(X,Y,Z)
-    print('file has data for ' + len(X) + ' points')
+    print('file has data for', len(X), 'points')
 
     pt58 = {}
     for key in dic58.keys():
@@ -41,7 +41,7 @@ def data_info(nodes, dic55, dic58):
         y = np.asarray(y)
         z = np.asarray(z)
         pt58[key] = (x, y, z)
-        print('Function type ',key, 'data are in ',len(x),' points')
+        print('Function type', key, 'data are in', len(x), 'points')
 
     pt55 = {}
     for key in dic55.keys():
@@ -61,6 +61,6 @@ def data_info(nodes, dic55, dic58):
         y = np.asarray(y)
         z = np.asarray(z)
         pt55[key] = (x, y, z)
-        print('Analysis type ',key,' data are in ',len(x),'points')
+        print('Analysis type', key, 'data are in', len(x), 'points')
 
     return all_pt,pt58,pt55
