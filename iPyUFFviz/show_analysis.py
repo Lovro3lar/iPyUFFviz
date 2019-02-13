@@ -41,7 +41,7 @@ def data_info(nodes, dic55, dic58):
         y = np.asarray(y)
         z = np.asarray(z)
         pt58[key] = (x, y, z)
-        print('Function type ' + key + ' data are in ' + len(x) + 'points')
+        print('Function type ',key, 'data are in ',len(x),' points')
 
     pt55 = {}
     for key in dic55.keys():
@@ -61,6 +61,6 @@ def data_info(nodes, dic55, dic58):
         y = np.asarray(y)
         z = np.asarray(z)
         pt55[key] = (x, y, z)
-        print('Analysis type ' + key + ' data are in ' + len(x) + 'points')
+        print('Analysis type ',key,' data are in ',len(x),'points')
 
     return all_pt,pt58,pt55
