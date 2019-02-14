@@ -1,17 +1,88 @@
 import numpy as np
 
 def basic_info(model):
+    """basic_info
+    
+    prints basic info abaout models saved in antiv UFF
+    
+    Parameters
+    ----------
+    model : ({'name':..., 'descript':...,'index': i},...) list 
+        list of dictonaries with name, description of model and index of native dataset
+    Returns
+    -------
+    info: array 
+        array of read model name and description. If native file has more then one dataset 151,
+        first elemet is wearning about multiple model in nativ uff. 
+    """
+
+    info=[]
+    if len(model)>1:
+        info.append('You have probably infomation about more then %i models in file, so you can expect problems') % (len(model))
     for i in range(len(model)):
         model_i = model[i]
-        print(model_i['name'])
-        print(model_i['description'])
-    if len(model)>1:
-        print('You have probably more than one model in file, so you can expect problems')
+        info.append(model_i['name'])
+        info.append(model_i['description'])
+    return info
+    
 
-def data_info(file,nodes, dic55, dic58):
+def data_info(file, nodes, dic55, dic58):
+    """data_info
+    
+    Prints how many point are in nativ UFF, and what kind of analysis result or mesurment data are stored.
+    Prepares arrays of x,y and z coordintas for points and points with data
+
+    Parameters
+    ----------
+    file : UFF class element
+        UFF class element - file prepared for further usage
+    nodes : ({'n':[x[n],y[n],z[n]],....,'index': i},...) list like
+        list of dictoraries with coordinates of nodes and index of native dataset
+    dic55: {'2':....,'3':....,....} python dictonary
+        dictonary with indices of dataset type 55 refer to used analyses type
+        at pyuff supported:
+        '2' - norma mode
+        '3' - complex eigenvalue first order (displacement)
+        '5' - frequency response
+        '7' - complex eigenvalue second order (velocity)
+    dic58: {'1':....,'2':....,....} python dictonary
+        dictonary with indices of dataset type 58 refer to used function type
+        at pyuff supported:
+        '0' - General or Unknown
+        '1' - Time Response
+        '2' - Auto Spectrum
+        '3' - Cross Spectrum
+        '4' - Frequency Response Function
+        '6' - Coherence
+    
+    Returns
+    -------
+    all_pt: (nparray(x),nparray(y), nparray(z)) list of arrays
+        list of nparray with x, array with y and an array with z coordintaes of all apint
+    pt58: {'1':(nparray(x),nparray(y), nparray(z)),....} dictonary
+        dictonary with arrays with x, y and z coordinte of reference node of dataset type 58 refer to used function type
+        at pyuff supported:
+        '0' - General or Unknown
+        '1' - Time Response
+        '2' - Auto Spectrum
+        '3' - Cross Spectrum
+        '4' - Frequency Response Function
+        '6' - Coherence
+    pt55: {'2':(nparray(x),nparray(y), nparray(z)),....} dictonary
+        dictonary with arrays with x, y and z coordinte of reference node of dataset type 55 refer to used analyses type
+        at pyuff supported:
+        '2' - norma mode
+        '3' - complex eigenvalue first order (displacement)
+        '5' - frequency response
+        '7' - complex eigenvalue second order (velocity)
+    info_data: array of strins
+        array of strins with informations obout data at points in native uff 
+    """
+
     X = []
     Y = []
     Z = []
+    info = []
     for i in range(len(nodes)):
         nodes_i = nodes[i]
         n_s = list(nodes_i.keys())
@@ -23,7 +94,7 @@ def data_info(file,nodes, dic55, dic58):
     Y = np.asarray(Y)
     Z = np.asarray(Z)
     all_pt=(X,Y,Z)
-    print('file has data for', len(X), 'points')
+    info.append(('file has data for %s points') % (len(X)))
 
     pt58 = {}
     for key in dic58.keys():
@@ -41,7 +112,7 @@ def data_info(file,nodes, dic55, dic58):
         y = np.asarray(y)
         z = np.asarray(z)
         pt58[key] = (x, y, z)
-        print('Function type', key, 'data are in', len(x), 'points')
+        info.append(('Function type %s data are in %s points') % (key,len(x)))
 
     pt55 = {}
     for key in dic55.keys():
@@ -61,6 +132,67 @@ def data_info(file,nodes, dic55, dic58):
         y = np.asarray(y)
         z = np.asarray(z)
         pt55[key] = (x, y, z)
-        print('Analysis type', key, 'data are in', len(x), 'points')
+        info.append(('Analysis type%s data are in %s points') % (key,len(x)))
 
-    return all_pt,pt58,pt55
+    return all_pt,pt58,pt55,info
+
+def print_info(info_model,info_data):
+    for i in info_model:
+        print(i)
+    for i in info_data:
+        print(i)
+
+def basic_show(file,model,nodes, dic55, dic58):
+    info = show_analysis.basic_info(model)
+    all_pt,pt58,pt55,info_data = show_analysis.data_info(file,nodes, dic55, dic58)    
+    for inf in info_data:
+        info.append(inf)
+    
+    names55 ={'2': 'norma mode',
+              '3': 'complex eigenvalue first order (displacement)',
+              '5': 'frequency response',
+              '7': 'complex eigenvalue second order (velocity)'}
+    names58 ={'0': 'General or Unknown',
+              '1': 'Time Response',
+              '2': 'Auto Spectrum',
+              '3': 'Cross Spectrum',
+              '4': 'Frequency Response Function',
+              '6': 'complex eigenvalue second order (velocity)'}
+    buttons = widgets.RadioButtons(options=['Function data', 'Analysis'],description='Results type:')
+    drop = widgets.Dropdown(options=dic58.keys())
+    
+    def drop_data(*args):
+        if buttons.value == 'Analysis':
+            drop.options = dic55.keys()
+        if buttons.value=='Function data':
+            drop.options = dic58.keys()
+    buttons.observe(drop_data,'value')
+    
+    def data_points(buttons, drop):
+        x = []
+        y = []
+        z = []
+        fig = ipv.figure()
+        basic_model = ipv.scatter(all_pt[0],all_pt[1],all_pt[2],size=2,marker='sphere',color='red')
+        if drop != None:
+            if buttons == 'Analysis':
+                x = pt55[drop][0]
+                y = pt55[drop][1]
+                z = pt55[drop][2]
+                points_hi = ipv.scatter(x,y,z,size=3,color='blue',marker='circle_2d')
+            if buttons == 'Function data':
+                x = pt58[drop][0]
+                y = pt58[drop][1]
+                z = pt58[drop][2]
+                points_hi = ipv.scatter(x,y,z,size=3,color='blue',marker='circle_2d')
+        
+        ipv.xlim(min(all_pt[0])-1,max(all_pt[0])+1)
+        ipv.ylim(min(all_pt[1])-1,max(all_pt[1])+1)
+        ipv.zlim(min(all_pt[2])-1,max(all_pt[2])+1)
+        ipv.show()
+       
+    
+    out = widgets.interactive_output(data_points, {'buttons':buttons, 'drop':drop})
+    display(widgets.VBox([widgets.VBox([widgets.Label(i) for i in info]),widgets.HBox([out,widgets.VBox([buttons,drop])])]))
+    
+    return buttons,drop
