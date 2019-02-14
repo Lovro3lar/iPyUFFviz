@@ -144,7 +144,7 @@ def print_info(info_model,info_data):
     for i in info_data:
         print(i)
 
-def basic_show(file,model,nodes, dic55, dic58):
+def basic_show_NB(file,model,nodes, dic55, dic58):
     info = basic_info(model)
     all_pt,pt58,pt55,info_data = data_info(file,nodes, dic55, dic58)    
     for inf in info_data:
