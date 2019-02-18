@@ -96,7 +96,7 @@ def anlyze_UFF(path):
 
     for i in uffdic['82']:
         dic = {}
-        dic['trace'] = file.read_sets(i)['trance_num']
+        dic['trace'] = file.read_sets(i)['trace_num']
         dic['nodes'] = file.read_sets(i)['nodes']
         dic['index'] = i
         lines.append(dic)

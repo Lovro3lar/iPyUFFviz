@@ -28,7 +28,7 @@ def basic_info(model):
     return info
     
 
-def data_info(file, nodes, dic55, dic58):
+def data_info(file, nodes, lines, dic55, dic58):
     """data_info
     
     Prints how many point are in nativ UFF, and what kind of analysis result or mesurment data are stored.
@@ -40,6 +40,8 @@ def data_info(file, nodes, dic55, dic58):
         UFF class element - file prepared for further usage
     nodes : ({'n':[x[n],y[n],z[n]],....,'index': i},...) list like
         list of dictoraries with coordinates of nodes and index of native dataset
+    lines: ({'trace':number,'nodes':np.array(.....),'index': i},...) array like
+        array of dictonaries with trance lines and theri nodes
     dic55: {'2':....,'3':....,....} python dictonary
         dictonary with indices of dataset type 55 refer to used analyses type
         at pyuff supported:
@@ -77,6 +79,8 @@ def data_info(file, nodes, dic55, dic58):
         '3' - complex eigenvalue first order (displacement)
         '5' - frequency response
         '7' - complex eigenvalue second order (velocity)
+    lines: ({'trace':number,'nodes':np.array(.....),'index': i,'x_l':....,'y_l':....,'z_l':......},...) array like
+        array of dictonaries with trance lines, theri nodes and coordinates
     info_data: array of strins
         array of strins with informations obout data at points in native uff 
     """
@@ -97,6 +101,23 @@ def data_info(file, nodes, dic55, dic58):
     Z = np.asarray(Z)
     all_pt=(X,Y,Z)
     info.append(('file has data for %s points') % (len(X)))
+    
+
+    for i in range(len(lines)):
+        l_nodes = lines[i]['nodes']
+        x = []
+        y = []
+        z = []
+        for n in l_nodes:
+            no = str(int(n))
+            for j in range(len(nodes)):
+                x.append(nodes[j][no][0])
+                y.append(nodes[j][no][1])
+                z.append(nodes[j][no][2])
+        lines[i]['x_l'] = np.array([x,x])
+        lines[i]['y_l'] = np.array([y,y])
+        lines[i]['z_l'] = np.array([z,z])
+
 
     pt58 = {}
     for key in dic58.keys():
@@ -136,7 +157,7 @@ def data_info(file, nodes, dic55, dic58):
         pt55[key] = (x, y, z)
         info.append(('Analysis type%s data are in %s points') % (key,len(x)))
 
-    return all_pt,pt58,pt55,info
+    return all_pt,pt58,pt55,lines,info
 
 def print_info(info_model,info_data):
     for i in info_model:
@@ -144,7 +165,7 @@ def print_info(info_model,info_data):
     for i in info_data:
         print(i)
 
-def basic_show_NB(file,model,nodes, dic55, dic58):
+def basic_show_NB(file,model,nodes, lines, dic55, dic58):
     """basic_show_NB
     
     Function prepair output with basic information obout data in uff file and draw out points in 3D.
@@ -186,7 +207,7 @@ def basic_show_NB(file,model,nodes, dic55, dic58):
 
 
     info = basic_info(model)
-    all_pt,pt58,pt55,info_data = data_info(file,nodes, dic55, dic58)    
+    all_pt,pt58,pt55,traces,info_data = data_info(file, nodes, lines, dic55, dic58)    
     for inf in info_data:
         info.append(inf)
     
@@ -213,10 +234,11 @@ def basic_show_NB(file,model,nodes, dic55, dic58):
     def data_points(buttons, drop):
         fig = ipv.figure()
         basic_model = ipv.scatter(all_pt[0],all_pt[1],all_pt[2],size=2,marker='sphere',color='red')
-        x_l = np.array([all_pt[0],all_pt[0]])
-        y_l = np.array([all_pt[1],all_pt[1]])
-        z_l = np.array([all_pt[2],all_pt[2]])
-        lines = ipv.plot_wireframe(x_l,y_l,z_l)
+        for i in range(len(traces)):
+            x_l = traces[i]['x_l']
+            y_l = traces[i]['y_l']
+            z_l = traces[i]['z_l']
+            lin = ipv.plot_wireframe(x_l,y_l,z_l)
         if drop != None:
             if buttons == 'Analysis':
                 x = pt55[drop][0]
