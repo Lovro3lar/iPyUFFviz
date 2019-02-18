@@ -221,14 +221,24 @@ def basic_show_NB(file,model,nodes, lines, dic55, dic58):
               '3': 'Cross Spectrum',
               '4': 'Frequency Response Function',
               '6': 'complex eigenvalue second order (velocity)'}
+    in_names55 = {'norma mode':'2',
+              'complex eigenvalue first order (displacement)':'3',
+              'frequency response':'5',
+              'complex eigenvalue second order (velocity)':'7'}
+    in_names58 ={'General or Unknown':'0',
+              'Time Response':'1',
+              'Auto Spectrum':'2',
+              'Cross Spectrum':'3',
+              'Frequency Response Function':'4',
+              'complex eigenvalue second order (velocity)':'6'}
     buttons = widgets.RadioButtons(options=['Function data', 'Analysis'],description='Results type:')
-    drop = widgets.Dropdown(options=dic58.keys())
+    drop = widgets.Dropdown(options=[names58[key] for key in dic58.keys()])
     
     def drop_data(*args):
         if buttons.value == 'Analysis':
-            drop.options = dic55.keys()
+            drop.options = [names55[key] for key in dic55.keys()]
         if buttons.value=='Function data':
-            drop.options = dic58.keys()
+            drop.options = [names58[key] for key in dic58.keys()]
     buttons.observe(drop_data,'value')
     
     def data_points(buttons, drop):
@@ -241,14 +251,14 @@ def basic_show_NB(file,model,nodes, lines, dic55, dic58):
             lin = ipv.plot_wireframe(x_l,y_l,z_l)
         if drop != None:
             if buttons == 'Analysis':
-                x = pt55[drop][0]
-                y = pt55[drop][1]
-                z = pt55[drop][2]
+                x = pt55[in_names55[drop]][0]
+                y = pt55[in_names55[drop]][1]
+                z = pt55[in_names55[drop]][2]
                 points_hi = ipv.scatter(x,y,z,size=3,color='blue',marker='circle_2d')
             if buttons == 'Function data':
-                x = pt58[drop][0]
-                y = pt58[drop][1]
-                z = pt58[drop][2]
+                x = pt58[in_names58[drop]][0]
+                y = pt58[in_names58[drop]][1]
+                z = pt58[in_names58[drop]][2]
                 points_hi = ipv.scatter(x,y,z,size=3,color='blue',marker='circle_2d')
         
         ipv.xlim(min(all_pt[0])-1,max(all_pt[0])+1)

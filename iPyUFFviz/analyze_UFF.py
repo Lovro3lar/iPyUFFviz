@@ -55,8 +55,8 @@ def anlyze_UFF(path):
                 index.append(i)
         uffdic[a] = index
 
-    keys_58 = [0, 1, 2, 3, 4, 6]
-    keys_55 = [2, 3, 5, 7]
+    keys_58 = ['0', '1', '2', '3', '4', '6']
+    keys_55 = ['2', '3', '5', '7']
     dic58 = {}
     dic55 = {}
     lines = []
@@ -68,7 +68,7 @@ def anlyze_UFF(path):
         index = []
         for i in uffdic['55']:
             f_typ = file.read_sets(i)['analysis_type']
-            if f_typ == key:
+            if str(f_typ) == key:
                 index.append(i)
         dic55[key] = index
 
@@ -76,7 +76,7 @@ def anlyze_UFF(path):
         index = []
         for i in uffdic['58']:
             f_typ = file.read_sets(i)['func_type']
-            if f_typ == key:
+            if str(f_typ) == key:
                 index.append(i)
         dic58[key] = index
 
