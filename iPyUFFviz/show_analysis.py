@@ -168,7 +168,7 @@ def print_info(info_model,info_data):
 def basic_show_NB(file,model,nodes, lines, dic55, dic58):
     """basic_show_NB
     
-    Function prepair output with basic information obout data in uff file and draw out points an trce lines in 3D.
+    Function prepair output with basic information obout data in uff file and draw out points and trce lines in 3D.
     Points are highlighted baised on chosen options in buttons and dropdown menu
     
     Parameters
