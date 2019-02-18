@@ -21,6 +21,8 @@ def anlyze_UFF(path):
         array of dictonaries with name, description of model and index of native dataset
     nodes: ({'n':[x[n],y[n],z[n]],....,'index': i},...) array like
         array of dictoraries with coordinates of nodes and index of native dataset
+    lines: ({'trace':number,'nodes':np.array(.....),'index': i},...) array like
+        array of dictonaries with trance lines and theri nodes
     trans_matrix: ({'n': trans. matrix,....,'index': i},...) array like
         array of dictoraries with transformation matrix of local coordinate sistems in nodes and index of native dataset
     dic55: {'2':....,'3':....,....} python dictonary
@@ -57,6 +59,7 @@ def anlyze_UFF(path):
     keys_55 = [2, 3, 5, 7]
     dic58 = {}
     dic55 = {}
+    lines = []
     model = []
     nodes = []
     trans_matrix = []
@@ -91,6 +94,13 @@ def anlyze_UFF(path):
         dic['index'] = i
         nodes.append(dic)
 
+    for i in uffdic['82']:
+        dic = {}
+        dic['trace'] = file.read_sets(i)['trance_num']
+        dic['nodes'] = file.read_sets(i)['nodes']
+        dic['index'] = i
+        lines.append(dic)
+
     for i in uffdic['2420']:
         dic = {}
         no = file.read_sets(i)['CS_sys_labels']
@@ -114,5 +124,5 @@ def anlyze_UFF(path):
     dic55=cleanup(dic55)
     dic58=cleanup(dic58)
 
-    return file,uffdic,model,nodes,trans_matrix,dic55,dic58
+    return file,uffdic,model,nodes,lines,trans_matrix,dic55,dic58
     
