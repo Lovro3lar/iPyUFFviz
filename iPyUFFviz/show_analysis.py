@@ -1,6 +1,7 @@
 import numpy as np
 import ipywidgets as widgets
 import ipyvolume as ipv
+from IPython.display import display
 
 def basic_info(model):
     """basic_info
@@ -79,9 +80,8 @@ def data_info(file, nodes, lines, dic55, dic58):
         '3' - complex eigenvalue first order (displacement)
         '5' - frequency response
         '7' - complex eigenvalue second order (velocity)
-    lines: ({'trace':number,'nodes':np.array(.....),'index': i,'x_l':....,'y_l':....,'z_l':......},...) array like
-        array of dictonaries with trance lines, theri nodes and coordinates
-    info_data: array of strins
+    lines: ({'trace':number,'nodes':np.array(.....),'index': i,'pairs':[(_,_),....]},...) array like
+        array of dictonaries with trance lines, theri nodes and pairs of indeces of points in all_pt to form a line
         array of strins with informations obout data at points in native uff 
     """
 
@@ -89,13 +89,27 @@ def data_info(file, nodes, lines, dic55, dic58):
     Y = []
     Z = []
     info = []
+    traces = []
+    for t in range(len(lines)):
+        traces.append(list(np.zeros_like(lines[t]['nodes'])))
+    add = 0
     for i in range(len(nodes)):
         nodes_i = nodes[i]
         n_s = list(nodes_i.keys())
-        for n in n_s[:-1]:
+        for j in range(len(n_s)-1):
+            n=n_s[j]
+            for t in range(len(lines)):
+                line = lines[t]
+                L = set(np.array(line['nodes'],dtype='float'))
+                N = set([float(n)])
+                if N.issubset(L):
+                    place = list(np.array(line['nodes'],dtype='float')).index(float(n))
+                    traces[t][place] = j+add
+        
             X.append(nodes_i[n][0])
             Y.append(nodes_i[n][1])
             Z.append(nodes_i[n][2])
+        add = len(n_s)
     X = np.asarray(X)
     Y = np.asarray(Y)
     Z = np.asarray(Z)
@@ -103,20 +117,12 @@ def data_info(file, nodes, lines, dic55, dic58):
     info.append(('file has data for %s points') % (len(X)))
     
 
-    for i in range(len(lines)):
-        l_nodes = lines[i]['nodes']
-        x = []
-        y = []
-        z = []
-        for n in l_nodes:
-            no = str(int(n))
-            for j in range(len(nodes)):
-                x.append(nodes[j][no][0])
-                y.append(nodes[j][no][1])
-                z.append(nodes[j][no][2])
-        lines[i]['x_l'] = np.array([x,x])
-        lines[i]['y_l'] = np.array([y,y])
-        lines[i]['z_l'] = np.array([z,z])
+    for i in range(len(traces)):
+        pairs=[]
+        t = traces[i]
+        for j in range(len(t)-1):
+            pairs.append((t[j],t[j+1]))
+        lines[i]['pairs'] = pairs
 
 
     pt58 = {}
@@ -242,24 +248,22 @@ def basic_show_NB(file,model,nodes, lines, dic55, dic58):
     buttons.observe(drop_data,'value')
     
     def data_points(buttons, drop):
-        fig = ipv.figure()
-        basic_model = ipv.scatter(all_pt[0],all_pt[1],all_pt[2],size=2,marker='sphere',color='red')
+        ipv.figure()
+        ipv.scatter(all_pt[0],all_pt[1],all_pt[2],size=2,marker='sphere',color='red')
         for i in range(len(traces)):
-            x_l = traces[i]['x_l']
-            y_l = traces[i]['y_l']
-            z_l = traces[i]['z_l']
-            lin = ipv.plot_wireframe(x_l,y_l,z_l)
+            pairs = traces[i]['pairs']
+            ipv.plot_trisurf(all_pt[0],all_pt[1],all_pt[2],lines=pairs)
         if drop != None:
             if buttons == 'Analysis':
                 x = pt55[in_names55[drop]][0]
                 y = pt55[in_names55[drop]][1]
                 z = pt55[in_names55[drop]][2]
-                points_hi = ipv.scatter(x,y,z,size=3,color='blue',marker='circle_2d')
+                ipv.scatter(x,y,z,size=3,color='blue',marker='circle_2d')
             if buttons == 'Function data':
                 x = pt58[in_names58[drop]][0]
                 y = pt58[in_names58[drop]][1]
                 z = pt58[in_names58[drop]][2]
-                points_hi = ipv.scatter(x,y,z,size=3,color='blue',marker='circle_2d')
+                ipv.scatter(x,y,z,size=3,color='blue',marker='circle_2d')
         
         ipv.xlim(min(all_pt[0])-1,max(all_pt[0])+1)
         ipv.ylim(min(all_pt[1])-1,max(all_pt[1])+1)
@@ -270,4 +274,4 @@ def basic_show_NB(file,model,nodes, lines, dic55, dic58):
     out = widgets.interactive_output(data_points, {'buttons':buttons, 'drop':drop})
     display(widgets.VBox([widgets.VBox([widgets.Label(i) for i in info]),widgets.HBox([out,widgets.VBox([buttons,drop])])]))
     
-    return buttons,drop
+    return buttons,drop,traces
