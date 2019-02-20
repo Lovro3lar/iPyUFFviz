@@ -73,6 +73,8 @@ def data_info(file, nodes, lines, dic55, dic58):
         '3' - Cross Spectrum
         '4' - Frequency Response Function
         '6' - Coherence
+    places58: {0: [....], 1: [....],....} dictonary
+        dictonary with informaion about whichd dataset 58 has infomaton about point in points array all_pt
     pt55: {'2':(nparray(x),nparray(y), nparray(z)),....} dictonary
         dictonary with arrays with x, y and z coordinte of reference node of dataset type 55 refer to used analyses type
         at pyuff supported:
@@ -80,6 +82,8 @@ def data_info(file, nodes, lines, dic55, dic58):
         '3' - complex eigenvalue first order (displacement)
         '5' - frequency response
         '7' - complex eigenvalue second order (velocity)
+    places55: {0: [....], 1: [....],....} dictonary
+        dictonary with informaion about which dataset 55 has infomaton about point in points array all_pt
     lines: ({'trace':number,'nodes':np.array(.....),'index': i,'pairs':[(_,_),....]},...) array like
         array of dictonaries with trance lines, theri nodes and pairs of indeces of points in all_pt to form a line
         array of strins with informations obout data at points in native uff 
@@ -126,6 +130,9 @@ def data_info(file, nodes, lines, dic55, dic58):
 
 
     pt58 = {}
+    places58={}
+    for p in range(len(all_pt[0])):
+        places58[p] =[]
     for key in dic58.keys():
         indices = dic58[key]
         x = []
@@ -133,10 +140,14 @@ def data_info(file, nodes, lines, dic55, dic58):
         z = []
         for i in indices:
             node = str(file.read_sets(i)['ref_node'])
+            add = 0
             for j in range(len(nodes)):
+                place = list(nodes[j].keys()).index(node)+add
+                places58[place].append(i)
                 x.append(nodes[j][node][0])
                 y.append(nodes[j][node][1])
                 z.append(nodes[j][node][2])
+                add = len(nodes[j].keys())-1
         x = np.asarray(x)
         y = np.asarray(y)
         z = np.asarray(z)
@@ -144,6 +155,9 @@ def data_info(file, nodes, lines, dic55, dic58):
         info.append(('Function type %s data are in %s points') % (key,len(x)))
 
     pt55 = {}
+    places55={}
+    for p in range(len(all_pt[0])):
+        places55[p] =[]
     for key in dic55.keys():
         indices = dic55[key]
         x = []
@@ -153,17 +167,21 @@ def data_info(file, nodes, lines, dic55, dic58):
             node_nums = file.read_sets(i)['node_nums']
             for no in node_nums:
                 node = str(no)
+                add = 0
                 for j in range(len(nodes)):
+                    place = list(nodes[j].keys()).index(node)+add
+                    places55[place].append(i)
                     x.append(nodes[j][node][0])
                     y.append(nodes[j][node][1])
                     z.append(nodes[j][node][2])
+                    add = len(nodes[j].keys())-1
         x = np.asarray(x)
         y = np.asarray(y)
         z = np.asarray(z)
         pt55[key] = (x, y, z)
         info.append(('Analysis type%s data are in %s points') % (key,len(x)))
 
-    return all_pt,pt58,pt55,lines,info
+    return all_pt,pt58,places58,pt55,places55,lines,info
 
 def print_info(info_model,info_data):
     for i in info_model:
@@ -213,7 +231,7 @@ def basic_show_NB(file,model,nodes, lines, dic55, dic58):
 
 
     info = basic_info(model)
-    all_pt,pt58,pt55,traces,info_data = data_info(file, nodes, lines, dic55, dic58)    
+    all_pt,pt58,places58,pt55,places55,traces,info_data = data_info(file, nodes, lines, dic55, dic58)    
     for inf in info_data:
         info.append(inf)
     
@@ -274,4 +292,4 @@ def basic_show_NB(file,model,nodes, lines, dic55, dic58):
     out = widgets.interactive_output(data_points, {'buttons':buttons, 'drop':drop})
     display(widgets.VBox([widgets.VBox([widgets.Label(i) for i in info]),widgets.HBox([out,widgets.VBox([buttons,drop])])]))
     
-    return buttons,drop,traces
+    return buttons,drop,traces,all_pt,places58,places55
