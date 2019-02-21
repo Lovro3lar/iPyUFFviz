@@ -2,7 +2,14 @@ import analyze_UFF as analiza
 import show_analysis 
 import numpy as np
 
-def data58(drop, file, all_pt, dic58,places58):
+def data58(drop, file, all_pt, dic58,places58,trans_matrix):
+    in_names58 ={'General or Unknown':'0',
+              'Time Response':'1',
+              'Auto Spectrum':'2',
+              'Cross Spectrum':'3',
+              'Frequency Response Function':'4',
+              'complex eigenvalue second order (velocity)':'6'}
+    drop = in_names58[drop]
     data = np.zeros((3,len(all_pt[0]),1))
     indices = dic58[drop]
     for index in indices:
@@ -16,9 +23,13 @@ def data58(drop, file, all_pt, dic58,places58):
             if B.issubset(A):
                 place.append(key)
         def get_rotma():
-            return np.array([[1., 0., 0.],
-                [0., 1., 0.],
-                [0., 0., 1.]])
+            t = []
+            for i in range(len(trans_matrix)):
+                t.append(trans_matrix[i][str(set58['ref_node'])])
+            if len(t)==1:
+                return t[0]
+            else:
+                return None
 
         def get_data():
             direc = set58['rsp_dir']
@@ -45,4 +56,5 @@ def data58(drop, file, all_pt, dic58,places58):
             data = data_i
         else:
             data[:,:,:data_i.shape[2]] += data_i
-    return np.transpose(data,axes=[0,2,1])[0],np.transpose(data,axes=[0,2,1])[1],np.transpose(data,axes=[0,2,1])[2]
+    #return np.transpose(data,axes=[0,2,1])[0],np.transpose(data,axes=[0,2,1])[1],np.transpose(data,axes=[0,2,1])[2]
+    return np.transpose(data,axes=[0,2,1])
