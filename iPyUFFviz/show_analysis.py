@@ -63,7 +63,7 @@ def data_info(file, nodes, lines, dic55, dic58):
     Returns
     -------
     all_pt: (nparray(x),nparray(y), nparray(z)) list of arrays
-        list of nparray with x, array with y and an array with z coordintaes of all apint
+        list of nparray with x, array with y and an array with z coordintaes of all points
     pt58: {'1':(nparray(x),nparray(y), nparray(z)),....} dictonary
         dictonary with arrays with x, y and z coordinte of reference node of dataset type 58 refer to used function type
         at pyuff supported:
