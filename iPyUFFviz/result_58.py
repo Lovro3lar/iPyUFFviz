@@ -53,6 +53,8 @@ def data58(drop, file, all_pt, dic58,places58,trans_matrix):
     drop = in_names58[drop]
     if drop == '0' or '1':
         time = True
+    else:
+        time = False
     data = np.zeros((3,len(all_pt[0]),1))
     indices = dic58[drop]
     for index in indices:
@@ -68,7 +70,7 @@ def data58(drop, file, all_pt, dic58,places58,trans_matrix):
         def get_rotma():
             t = []
             for i in range(len(trans_matrix)):
-                t.append(trans_matrix[i][set58['ref_node']])
+                t.append(trans_matrix[i][str(set58['ref_node'])])
             if len(t)==1:
                 return t[0]
             else:
