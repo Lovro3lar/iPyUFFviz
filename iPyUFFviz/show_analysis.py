@@ -292,4 +292,4 @@ def basic_show_NB(file,model,nodes, lines, dic55, dic58):
     out = widgets.interactive_output(data_points, {'buttons':buttons, 'drop':drop})
     display(widgets.VBox([widgets.VBox([widgets.Label(i) for i in info]),widgets.HBox([out,widgets.VBox([buttons,drop])])]))
     
-    return buttons,drop,traces,all_pt,places58,places55
+    return buttons,drop.value,traces,all_pt,places58,places55
