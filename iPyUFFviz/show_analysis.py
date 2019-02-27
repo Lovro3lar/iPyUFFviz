@@ -179,7 +179,7 @@ def data_info(file, nodes, lines, dic55, dic58):
         y = np.asarray(y)
         z = np.asarray(z)
         pt55[key] = (x, y, z)
-        info.append(('Analysis type%s data are in %s points') % (key,len(x)))
+        info.append(('Analysis type %s data are in %s points') % (key,len(x)))
 
     return all_pt,pt58,places58,pt55,places55,lines,info
 
