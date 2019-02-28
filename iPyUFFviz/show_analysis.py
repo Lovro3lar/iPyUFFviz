@@ -166,7 +166,7 @@ def data_info(file, nodes, lines, dic55, dic58):
         for i in indices:
             node_nums = file.read_sets(i)['node_nums']
             for no in node_nums:
-                node = str(no)
+                node = str(int(no))
                 add = 0
                 for j in range(len(nodes)):
                     place = list(nodes[j].keys()).index(node)+add
@@ -235,7 +235,7 @@ def basic_show_NB(file,model,nodes, lines, dic55, dic58):
     for inf in info_data:
         info.append(inf)
     
-    names55 ={'2': 'norma mode',
+    names55 ={'2': 'normal mode',
               '3': 'complex eigenvalue first order (displacement)',
               '5': 'frequency response',
               '7': 'complex eigenvalue second order (velocity)'}
@@ -245,7 +245,7 @@ def basic_show_NB(file,model,nodes, lines, dic55, dic58):
               '3': 'Cross Spectrum',
               '4': 'Frequency Response Function',
               '6': 'complex eigenvalue second order (velocity)'}
-    in_names55 = {'norma mode':'2',
+    in_names55 = {'normal mode':'2',
               'complex eigenvalue first order (displacement)':'3',
               'frequency response':'5',
               'complex eigenvalue second order (velocity)':'7'}
@@ -292,4 +292,4 @@ def basic_show_NB(file,model,nodes, lines, dic55, dic58):
     out = widgets.interactive_output(data_points, {'buttons':buttons, 'drop':drop})
     display(widgets.VBox([widgets.VBox([widgets.Label(i) for i in info]),widgets.HBox([out,widgets.VBox([buttons,drop])])]))
     
-    return buttons,drop.value,traces,all_pt,places58,places55
+    return buttons,drop,traces,all_pt,places58,places55
