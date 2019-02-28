@@ -5,7 +5,7 @@ import numpy as np
 def data58(drop, file, all_pt, dic58,places58,trans_matrix):
     """data58
     
-    [summary]
+    Prepares outputs for vizualization data from datata sets 58
     
     Parameters
     ----------
@@ -50,7 +50,7 @@ def data58(drop, file, all_pt, dic58,places58,trans_matrix):
               'Cross Spectrum':'3',
               'Frequency Response Function':'4',
               'complex eigenvalue second order (velocity)':'6'}
-    drop = in_names58[drop]
+    drop = in_names58[drop.value]
     if drop == '0' or '1':
         time = True
     else:
