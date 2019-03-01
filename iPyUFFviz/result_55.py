@@ -23,7 +23,7 @@ def data55(drop, file, all_pt, dic55,trans_matrix,nodes):
     dic55: {'2':....,'3':....,....} python dictonary
         dictonary with indices of dataset type 55 refer to used analyses type
         at pyuff supported:
-        '2' - norma mode
+        '2' - normal mode
         '3' - complex eigenvalue first order (displacement)
         '5' - frequency response
         '7' - complex eigenvalue second order (velocity)
@@ -46,6 +46,7 @@ def data55(drop, file, all_pt, dic55,trans_matrix,nodes):
     indices = dic55[drop]
     data = np.zeros((3,len(all_pt[0]),len(dic55[drop])))
     all_nodes = []
+    nat_freq = []
     for no in nodes:
         for n in list(no.keys()):
             if n == 'index':
@@ -67,4 +68,8 @@ def data55(drop, file, all_pt, dic55,trans_matrix,nodes):
                     return None
             data[:,n,i]+=np.matmul(get_rotma(),np.array([set55['r1'][n],set55['r2'][n],set55['r3'][n]]))
         i+=1
-    return np.transpose(data,axes=[0,2,1])
+        if drop == '2' or '5':
+            nat_freq.append(set55['freq'])
+        else:
+            nat_freq.append(np.sign(np.imag(set55['eig']))*np.abs(set55['eig']))
+    return np.transpose(data,axes=[0,2,1]),nat_freq
