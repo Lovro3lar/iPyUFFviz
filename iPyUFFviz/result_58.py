@@ -51,12 +51,13 @@ def data58(drop, file, all_pt, dic58,places58,trans_matrix):
               'Frequency Response Function':'4',
               'complex eigenvalue second order (velocity)':'6'}
     drop = in_names58[drop.value]
-    if drop == '0' or '1':
-        time = True
-    else:
-        time = False
     data = np.zeros((3,len(all_pt[0]),1))
     indices = dic58[drop]
+    if drop == '0' or drop == '1':
+        freq=[]
+    else:
+        freq=list(range(len(file.read_sets(indices[0])['data'])))
+
     for index in indices:
         set58 = file.read_sets(index)
         data_i=np.zeros((3,len(all_pt[0]),set58['data'].size))
@@ -102,4 +103,4 @@ def data58(drop, file, all_pt, dic58,places58,trans_matrix):
         else:
             data[:,:,:data_i.shape[2]] += data_i
     #return np.transpose(data,axes=[0,2,1])[0],np.transpose(data,axes=[0,2,1])[1],np.transpose(data,axes=[0,2,1])[2]
-    return np.transpose(data,axes=[0,2,1]),time
+    return np.transpose(data,axes=[0,2,1]),freq
